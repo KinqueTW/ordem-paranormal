@@ -208,7 +208,7 @@ const addWeapon = () => {
         }
     
         msgCombat.classList.remove("add-msg-combat")
-
+        const a = 'a'
     }
 }
 
