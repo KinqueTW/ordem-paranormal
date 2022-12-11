@@ -152,7 +152,6 @@ const callDados = (atributo, dado) => {
 
 const sair = () => {
     msgDado.classList.remove("add-msg-dado")
-    msgCombat.classList.remove("add-msg-combat")
     msgInventory.classList.remove("add-msg-inventory")
     msgMoney.classList.remove("add-msg-money")
     msgPontos.classList.remove("add-msg-pontos")
@@ -160,60 +159,146 @@ const sair = () => {
 
 //------------------------------------------------
 
+const clearInput = () => {
+    for (let cont = 0; cont < weaponCharacteristics.length; cont++) {
+        weaponCharacteristics[cont].value = ""
+    }
+}
 const add = () => {
     msgCombat.classList.add("add-msg-combat")
+    clearInput()
 }
 
-const weapons = document.querySelector("#weapons")
+const tbody = document.querySelector("#weapons")
+const arrayWeapons = []
+
+let editor = false
+let editorId = ""
+
 const weaponCharacteristics = document.querySelectorAll("#weapon-characteristics");
 
 const addWeapon = () => {
     if (weaponCharacteristics[0].value != "" && weaponCharacteristics[2].value != "") {
-        let tr = document.createElement("tr")
-        weapons.appendChild(tr);
-    
-        const td = document.createElement('td')
-        const button = document.createElement("button")
-    
-        button.classList.add("button-delete")
-    
-        td.appendChild(button)
-        button.innerHTML = "🗑"
-        tr.appendChild(td)
-    
-        for (var cont = 0; cont <= 2; cont++) {
-            const td = document.createElement("td")
-            tr.appendChild(td)
-            td.innerHTML = weaponCharacteristics[cont].value
+        tbody.innerHTML = ""
+        let tr = tbody.insertRow()
+        const arrayTitulos = ["", "Nome", "Tipo", "Dano", "Mun. Atual", "Mun. Maximo", "Ataque", "Alcance", "Defeito", "Aréa"]
+        for (let i = 0; i < arrayTitulos.length; i++) {
+            const th = document.createElement("th")
+            th.innerHTML = arrayTitulos[i]
+            tr.append(th)
         }
-    //----------munição(ammunition)------------
-        for (var cont = 3; cont <= 4; cont++) {
-            const td = document.createElement("td")
-            const ammunition = document.createElement("input")
-            tr.appendChild(td)
-            td.appendChild(ammunition)
-            ammunition.value = weaponCharacteristics[cont].value
+
+        if (editor == false) {
+            let weaponsFull = {}
+            if (arrayWeapons[0]) {
+                weaponsFull.id = 1 + arrayWeapons[arrayWeapons.length - 1].id
+            } else {
+                weaponsFull.id = 1
+            }
+            weaponsFull.nome = weaponCharacteristics[0].value
+            weaponsFull.tipo = weaponCharacteristics[1].value
+            weaponsFull.dano = weaponCharacteristics[2].value
+            weaponsFull.munAtual = weaponCharacteristics[3].value
+            weaponsFull.munMax = weaponCharacteristics[4].value
+            weaponsFull.ataque = weaponCharacteristics[5].value
+            weaponsFull.alcance = weaponCharacteristics[6].value
+            weaponsFull.defeito = weaponCharacteristics[7].value
+            weaponsFull.area = weaponCharacteristics[8].value
+
+            arrayWeapons.push(weaponsFull)
+        } else {
+            for (let cont = 0; cont < arrayWeapons.length; cont ++) {
+                if (editorId == arrayWeapons[cont].id) {
+                    arrayWeapons[cont].nome = weaponCharacteristics[0].value
+                    arrayWeapons[cont].tipo = weaponCharacteristics[1].value
+                    arrayWeapons[cont].dano = weaponCharacteristics[2].value
+                    arrayWeapons[cont].munAtual = weaponCharacteristics[3].value
+                    arrayWeapons[cont].munMax = weaponCharacteristics[4].value
+                    arrayWeapons[cont].ataque = weaponCharacteristics[5].value
+                    arrayWeapons[cont].alcance = weaponCharacteristics[6].value
+                    arrayWeapons[cont].defeito = weaponCharacteristics[7].value
+                    arrayWeapons[cont].area = weaponCharacteristics[8].value
+                }
+            }
         }
-    //-----------------------------------------
-        for (var cont = 5; cont <= 8; cont++) {
-            const td = document.createElement("td")
-            tr.appendChild(td)
-            td.innerHTML = weaponCharacteristics[cont].value
+
+        for (var cont = 0; cont < arrayWeapons.length; cont++) {
+            let tr = tbody.insertRow()
+
+            let tdAction = tr.insertCell()
+            let tdName = tr.insertCell()
+            let tdType = tr.insertCell()
+            let tdDamage = tr.insertCell()
+            let tdMunAtual = tr.insertCell()
+            let tdMunMaxima = tr.insertCell()
+            let tdAtack = tr.insertCell()
+            let tdReach = tr.insertCell()
+            let tdDefect = tr.insertCell()
+            let tdArea = tr.insertCell()
+
+            const button = document.createElement('button')
+            button.innerHTML = "🗑"
+            tdAction.append(button)
+
+            const edit = document.createElement('button')
+            edit.innerHTML = "🖊️"
+            tdAction.append(edit)
+
+            button.classList.add(".button-delete")
+            button.setAttribute("id", arrayWeapons[cont].id)
+            button.addEventListener('click', delWeapon)
+
+            edit.classList.add("edit")
+            edit.setAttribute("id", arrayWeapons[cont].id)
+            edit.addEventListener("click", handleClickEdit)
+
+            tdName.innerHTML = arrayWeapons[cont].nome
+            tdType.innerHTML = arrayWeapons[cont].tipo
+            tdDamage.innerHTML = arrayWeapons[cont].dano
+            tdMunAtual.innerHTML = arrayWeapons[cont].munAtual
+            tdMunMaxima.innerHTML = arrayWeapons[cont].munMax
+            tdAtack.innerHTML = arrayWeapons[cont].ataque
+            tdReach.innerHTML = arrayWeapons[cont].alcance
+            tdDefect.innerHTML = arrayWeapons[cont].defeito
+            tdArea.innerHTML = arrayWeapons[cont].area
         }
-    
-        let buttonDel = document.querySelectorAll(".button-delete")
-    
-        for (let del of buttonDel) {
-            del.addEventListener('click', delWeapon)
-        }
-    
+
         msgCombat.classList.remove("add-msg-combat")
-        const a = 'a'
+        editor = false
     }
 }
 
 const delWeapon = (e) => {
     e.composedPath()[2].remove()
+    for (let cont = 0; cont < arrayWeapons.length; cont ++) {
+        if (e.path[0].id == arrayWeapons[cont].id) {
+            arrayWeapons.splice(cont, 1)
+        }
+    }
+}
+
+const handleClickEdit = (e) => {
+    editor = true
+    editorId = e.path[0].id
+    add()
+    for (let cont = 0; cont < arrayWeapons.length; cont++) {
+        if (editorId == arrayWeapons[cont].id) {
+            weaponCharacteristics[0].value = arrayWeapons[cont].nome
+            weaponCharacteristics[1].value = arrayWeapons[cont].tipo
+            weaponCharacteristics[2].value = arrayWeapons[cont].dano
+            weaponCharacteristics[3].value = arrayWeapons[cont].munAtual
+            weaponCharacteristics[4].value = arrayWeapons[cont].munMax
+            weaponCharacteristics[5].value = arrayWeapons[cont].ataque
+            weaponCharacteristics[6].value = arrayWeapons[cont].alcance
+            weaponCharacteristics[7].value = arrayWeapons[cont].defeito
+            weaponCharacteristics[8].value = arrayWeapons[cont].area
+        }
+    }
+}
+
+const backCombat = () => {
+    msgCombat.classList.remove("add-msg-combat")
+    editor = false
 }
 
 //------------------------------------------------------
