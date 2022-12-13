@@ -1,11 +1,8 @@
-const containerPontos = document.querySelectorAll(".pontos")
-
 const nameDado = document.querySelector("#nome-dado")
 const dadoValue = document.querySelector("#dado")
 const sucesso = document.querySelector("#sucesso")
 const valorAtributos = document.querySelectorAll("#atributo-valor")
 
-const select = document.querySelector("#select")
 const msgDado = document.querySelector(".msg-dado")
 const msgCombat = document.querySelector(".msg-combat")
 const msgInventory = document.querySelector(".msg-inventory")
