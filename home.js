@@ -558,5 +558,10 @@ function carregarPagina() {
         handleWeight()
     } catch (err) {
         console.error("Erro ao carregar dados:", err)
+        
+        document.addEventListener("DOMContentLoaded", () => {
+    carregarPagina()
+})
+
     }
 }
