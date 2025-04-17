@@ -557,3 +557,4 @@ function carregarPagina() {
     handleWeight()
 }
 carregarPagina()
+<button onclick="salvarPagina()">💾 Salvar Alterações</button>
