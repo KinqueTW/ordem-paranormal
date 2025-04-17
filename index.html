@@ -623,57 +623,33 @@
 
     <script src="home.js"></script>
 
-    <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Página Editável</title>
-  <style>
-    [contenteditable="true"] {
-      border: 1px dashed #ccc;
-      padding: 5px;
+    <button onclick="salvarPagina()">Salvar Tudo</button>
+<button onclick="limparPagina()">Limpar Tudo</button>
+
+<script>
+  // ID único pra essa página, útil se tiver várias diferentes
+  const CHAVE_STORAGE = "pagina_editada";
+
+  // Salva TODO o HTML visível da página
+  function salvarPagina() {
+    const conteudo = document.body.innerHTML;
+    localStorage.setItem(CHAVE_STORAGE, conteudo);
+    alert("Página salva localmente!");
+  }
+
+  // Carrega o HTML salvo e sobrescreve o conteúdo atual
+  window.onload = () => {
+    const salvo = localStorage.getItem(CHAVE_STORAGE);
+    if (salvo) {
+      document.body.innerHTML = salvo;
     }
-    button {
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1 contenteditable="true" id="titulo">Clique aqui para editar o título</h1>
-  <p contenteditable="true" id="paragrafo">Você também pode editar este parágrafo. As mudanças são salvas apenas para você.</p>
+  };
 
-  <button onclick="salvar()">Salvar</button>
-  <button onclick="limpar()">Limpar</button>
-
-  <script>
-    const campos = ['titulo', 'paragrafo'];
-
-    // Carrega o conteúdo salvo
-    window.onload = () => {
-      campos.forEach(id => {
-        const salvo = localStorage.getItem(id);
-        if (salvo) {
-          document.getElementById(id).innerHTML = salvo;
-        }
-      });
-    };
-
-    // Salva o conteúdo de cada campo
-    function salvar() {
-      campos.forEach(id => {
-        const el = document.getElementById(id);
-        localStorage.setItem(id, el.innerHTML);
-      });
-      alert('Conteúdo salvo localmente!');
-    }
-
-    // Limpa os dados salvos
-    function limpar() {
-      campos.forEach(id => {
-        localStorage.removeItem(id);
-      });
-      location.reload();
-    }
-  </script>
-
+  // Limpa tudo e recarrega
+  function limparPagina() {
+    localStorage.removeItem(CHAVE_STORAGE);
+    location.reload();
+  }
+</script>
 </body>
 </html>
