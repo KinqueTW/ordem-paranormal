@@ -473,35 +473,87 @@ const addMoney = () => {
 }
 money.innerHTML = `Dinheiro: 00R$`
 
-<script>
-  // Encontra todos os elementos editáveis com IDs
-  function getEditaveis() {
-    return Array.from(document.querySelectorAll('[contenteditable="true"][id]'));
-  }
 
-  // Carrega os dados salvos do localStorage
-  window.onload = () => {
-    getEditaveis().forEach(el => {
-      const salvo = localStorage.getItem("editavel_" + el.id);
-      if (salvo) {
-        el.innerHTML = salvo;
-      }
-    });
-  };
+function salvarPagina() {
+    const dados = {
+        atributos: Array.from(valorAtributos).map(input => input.value),
+        armas: arrayWeapons,
+        vida: {
+            atual: pontosAtuaisTotais[0].value,
+            max: pontosMaximosTotais[0].value,
+        },
+        sanidade: {
+            atual: pontosAtuaisTotais[1].value,
+            max: pontosMaximosTotais[1].value,
+        },
+        ocultismo: {
+            atual: pontosAtuaisTotais[2].value,
+            max: pontosMaximosTotais[2].value,
+        },
+        dinheiro: money.innerHTML,
+        inventario: Array.from(document.querySelectorAll(".items")).map(item => ({
+            nome: item.children[1].value,
+            peso: item.children[2].value
+        }))
+    }
+    localStorage.setItem("dadosFicha", JSON.stringify(dados))
+    alert("Alterações salvas!")
+}
 
-  // Salva todos os conteúdos editáveis
-  function salvarTudo() {
-    getEditaveis().forEach(el => {
-      localStorage.setItem("editavel_" + el.id, el.innerHTML.trim());
-    });
-    alert("Conteúdo salvo localmente!");
-  }
+function carregarPagina() {
+    const dados = JSON.parse(localStorage.getItem("dadosFicha"))
+    if (!dados) return
 
-  // Limpa os dados e recarrega a página
-  function limparTudo() {
-    getEditaveis().forEach(el => {
-      localStorage.removeItem("editavel_" + el.id);
-    });
-    location.reload();
-  }
-</script>
+    // atributos
+    dados.atributos.forEach((valor, i) => {
+        valorAtributos[i].value = valor
+    })
+
+    // vida, sanidade, ocultismo
+    pontosAtuaisTotais[0].value = dados.vida.atual
+    pontosMaximosTotais[0].value = dados.vida.max
+    pontosAtuaisTotais[1].value = dados.sanidade.atual
+    pontosMaximosTotais[1].value = dados.sanidade.max
+    pontosAtuaisTotais[2].value = dados.ocultismo.atual
+    pontosMaximosTotais[2].value = dados.ocultismo.max
+
+    // barras
+    document.querySelector(".vida").style.width = `${(dados.vida.atual / dados.vida.max) * 100}%`
+    document.querySelector(".sanidade").style.width = `${(dados.sanidade.atual / dados.sanidade.max) * 100}%`
+    document.querySelector(".ocultismo").style.width = `${(dados.ocultismo.atual / dados.ocultismo.max) * 100}%`
+
+    // dinheiro
+    money.innerHTML = dados.dinheiro
+
+    // armas
+    arrayWeapons.length = 0
+    dados.armas.forEach(arma => {
+        arrayWeapons.push(arma)
+    })
+    addWeapon()
+
+    // inventário
+    inventory.innerHTML = ""
+    peso.length = 0
+    dados.inventario.forEach(item => {
+        const div = document.createElement("div")
+        div.classList.add("items")
+
+        const del = document.createElement("button")
+        del.classList.add("del-buttons")
+        del.innerHTML = "🗑"
+        del.addEventListener("click", handleClickDelete)
+
+        const nome = document.createElement("input")
+        nome.value = item.nome
+
+        const pesoItem = document.createElement("input")
+        pesoItem.value = item.peso
+
+        peso.push(Number(item.peso))
+        div.append(del, nome, pesoItem)
+        inventory.appendChild(div)
+    })
+    handleWeight()
+}
+carregarPagina()
