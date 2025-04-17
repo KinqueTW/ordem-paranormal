@@ -622,5 +622,48 @@
     </div>
 
     <script src="home.js"></script>
+
+    <html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor Pessoal</title>
+  <style>
+    textarea {
+      width: 100%;
+      height: 300px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Seu Editor Pessoal</h1>
+  <textarea id="editor" placeholder="Digite aqui..."></textarea>
+  <br>
+  <button onclick="salvar()">Salvar</button>
+  <button onclick="limpar()">Limpar</button>
+
+  <script>
+    const textarea = document.getElementById('editor');
+
+    // Carrega o conteúdo salvo anteriormente (se houver)
+    window.onload = () => {
+      const textoSalvo = localStorage.getItem('meuTexto');
+      if (textoSalvo) {
+        textarea.value = textoSalvo;
+      }
+    };
+
+    // Salva no localStorage
+    function salvar() {
+      localStorage.setItem('meuTexto', textarea.value);
+      alert('Texto salvo localmente!');
+    }
+
+    // Limpa o texto e remove do localStorage
+    function limpar() {
+      textarea.value = '';
+      localStorage.removeItem('meuTexto');
+    }
+  </script>
 </body>
 </html>
