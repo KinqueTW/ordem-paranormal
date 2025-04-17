@@ -473,3 +473,28 @@ const addMoney = () => {
 }
 money.innerHTML = `Dinheiro: 00R$`
 
+<script>
+  // ID único pra essa página, útil se tiver várias diferentes
+  const CHAVE_STORAGE = "pagina_editada";
+
+  // Salva TODO o HTML visível da página
+  function salvarPagina() {
+    const conteudo = document.body.innerHTML;
+    localStorage.setItem(CHAVE_STORAGE, conteudo);
+    alert("Página salva localmente!");
+  }
+
+  // Carrega o HTML salvo e sobrescreve o conteúdo atual
+  window.onload = () => {
+    const salvo = localStorage.getItem(CHAVE_STORAGE);
+    if (salvo) {
+      document.body.innerHTML = salvo;
+    }
+  };
+
+  // Limpa tudo e recarrega
+  function limparPagina() {
+    localStorage.removeItem(CHAVE_STORAGE);
+    location.reload();
+  }
+</script>
