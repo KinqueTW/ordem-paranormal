@@ -626,44 +626,54 @@
     <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Editor Pessoal</title>
+  <title>Página Editável</title>
   <style>
-    textarea {
-      width: 100%;
-      height: 300px;
-      font-size: 16px;
+    [contenteditable="true"] {
+      border: 1px dashed #ccc;
+      padding: 5px;
+    }
+    button {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Seu Editor Pessoal</h1>
-  <textarea id="editor" placeholder="Digite aqui..."></textarea>
-  <br>
+  <h1 contenteditable="true" id="titulo">Clique aqui para editar o título</h1>
+  <p contenteditable="true" id="paragrafo">Você também pode editar este parágrafo. As mudanças são salvas apenas para você.</p>
+
   <button onclick="salvar()">Salvar</button>
   <button onclick="limpar()">Limpar</button>
 
   <script>
-    const textarea = document.getElementById('editor');
+    const campos = ['titulo', 'paragrafo'];
 
-    // Carrega o conteúdo salvo anteriormente (se houver)
+    // Carrega o conteúdo salvo
     window.onload = () => {
-      const textoSalvo = localStorage.getItem('meuTexto');
-      if (textoSalvo) {
-        textarea.value = textoSalvo;
-      }
+      campos.forEach(id => {
+        const salvo = localStorage.getItem(id);
+        if (salvo) {
+          document.getElementById(id).innerHTML = salvo;
+        }
+      });
     };
 
-    // Salva no localStorage
+    // Salva o conteúdo de cada campo
     function salvar() {
-      localStorage.setItem('meuTexto', textarea.value);
-      alert('Texto salvo localmente!');
+      campos.forEach(id => {
+        const el = document.getElementById(id);
+        localStorage.setItem(id, el.innerHTML);
+      });
+      alert('Conteúdo salvo localmente!');
     }
 
-    // Limpa o texto e remove do localStorage
+    // Limpa os dados salvos
     function limpar() {
-      textarea.value = '';
-      localStorage.removeItem('meuTexto');
+      campos.forEach(id => {
+        localStorage.removeItem(id);
+      });
+      location.reload();
     }
   </script>
+
 </body>
 </html>
