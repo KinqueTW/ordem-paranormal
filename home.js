@@ -474,27 +474,34 @@ const addMoney = () => {
 money.innerHTML = `Dinheiro: 00R$`
 
 <script>
-  // ID único pra essa página, útil se tiver várias diferentes
-  const CHAVE_STORAGE = "pagina_editada";
-
-  // Salva TODO o HTML visível da página
-  function salvarPagina() {
-    const conteudo = document.body.innerHTML;
-    localStorage.setItem(CHAVE_STORAGE, conteudo);
-    alert("Página salva localmente!");
+  // Encontra todos os elementos editáveis com IDs
+  function getEditaveis() {
+    return Array.from(document.querySelectorAll('[contenteditable="true"][id]'));
   }
 
-  // Carrega o HTML salvo e sobrescreve o conteúdo atual
+  // Carrega os dados salvos do localStorage
   window.onload = () => {
-    const salvo = localStorage.getItem(CHAVE_STORAGE);
-    if (salvo) {
-      document.body.innerHTML = salvo;
-    }
+    getEditaveis().forEach(el => {
+      const salvo = localStorage.getItem("editavel_" + el.id);
+      if (salvo) {
+        el.innerHTML = salvo;
+      }
+    });
   };
 
-  // Limpa tudo e recarrega
-  function limparPagina() {
-    localStorage.removeItem(CHAVE_STORAGE);
+  // Salva todos os conteúdos editáveis
+  function salvarTudo() {
+    getEditaveis().forEach(el => {
+      localStorage.setItem("editavel_" + el.id, el.innerHTML.trim());
+    });
+    alert("Conteúdo salvo localmente!");
+  }
+
+  // Limpa os dados e recarrega a página
+  function limparTudo() {
+    getEditaveis().forEach(el => {
+      localStorage.removeItem("editavel_" + el.id);
+    });
     location.reload();
   }
 </script>
