@@ -474,6 +474,8 @@ const addMoney = () => {
 money.innerHTML = `Dinheiro: 00R$`
 
 
+// ----- SALVAR TUDO -----
+
 function salvarPagina() {
     const dados = {
         atributos: Array.from(valorAtributos).map(input => input.value),
@@ -556,5 +558,3 @@ function carregarPagina() {
     })
     handleWeight()
 }
-carregarPagina()
-<button onclick="salvarPagina()">💾 Salvar Alterações</button>
