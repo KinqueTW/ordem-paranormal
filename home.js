@@ -473,89 +473,90 @@ const addMoney = () => {
 }
 money.innerHTML = `Dinheiro: 00R$`
 
-
-// ----- SALVAR TUDO -----
-
 function salvarPagina() {
-    const dados = {
-        atributos: Array.from(valorAtributos).map(input => input.value),
-        armas: arrayWeapons,
-        vida: {
-            atual: pontosAtuaisTotais[0].value,
-            max: pontosMaximosTotais[0].value,
-        },
-        sanidade: {
-            atual: pontosAtuaisTotais[1].value,
-            max: pontosMaximosTotais[1].value,
-        },
-        ocultismo: {
-            atual: pontosAtuaisTotais[2].value,
-            max: pontosMaximosTotais[2].value,
-        },
-        dinheiro: money.innerHTML,
-        inventario: Array.from(document.querySelectorAll(".items")).map(item => ({
-            nome: item.children[1].value,
-            peso: item.children[2].value
-        }))
+    try {
+        const dados = {
+            atributos: Array.from(valorAtributos).map(input => input.value),
+            armas: arrayWeapons,
+            vida: {
+                atual: pontosAtuaisTotais[0].value,
+                max: pontosMaximosTotais[0].value,
+            },
+            sanidade: {
+                atual: pontosAtuaisTotais[1].value,
+                max: pontosMaximosTotais[1].value,
+            },
+            ocultismo: {
+                atual: pontosAtuaisTotais[2].value,
+                max: pontosMaximosTotais[2].value,
+            },
+            dinheiro: money.innerHTML,
+            inventario: Array.from(document.querySelectorAll(".items")).map(item => ({
+                nome: item.children[1].value,
+                peso: item.children[2].value
+            }))
+        }
+        localStorage.setItem("dadosFicha", JSON.stringify(dados))
+        alert("Alterações salvas!")
+    } catch (err) {
+        console.error("Erro ao salvar:", err)
     }
-    localStorage.setItem("dadosFicha", JSON.stringify(dados))
-    alert("Alterações salvas!")
 }
 
 function carregarPagina() {
-    const dados = JSON.parse(localStorage.getItem("dadosFicha"))
-    if (!dados) return
+    try {
+        const dados = JSON.parse(localStorage.getItem("dadosFicha"))
+        if (!dados) {
+            console.log("Nenhum dado salvo encontrado.")
+            return
+        }
 
-    // atributos
-    dados.atributos.forEach((valor, i) => {
-        valorAtributos[i].value = valor
-    })
+        console.log("Dados carregados:", dados)
 
-    // vida, sanidade, ocultismo
-    pontosAtuaisTotais[0].value = dados.vida.atual
-    pontosMaximosTotais[0].value = dados.vida.max
-    pontosAtuaisTotais[1].value = dados.sanidade.atual
-    pontosMaximosTotais[1].value = dados.sanidade.max
-    pontosAtuaisTotais[2].value = dados.ocultismo.atual
-    pontosMaximosTotais[2].value = dados.ocultismo.max
+        dados.atributos?.forEach((valor, i) => {
+            if (valorAtributos[i]) valorAtributos[i].value = valor
+        })
 
-    // barras
-    document.querySelector(".vida").style.width = `${(dados.vida.atual / dados.vida.max) * 100}%`
-    document.querySelector(".sanidade").style.width = `${(dados.sanidade.atual / dados.sanidade.max) * 100}%`
-    document.querySelector(".ocultismo").style.width = `${(dados.ocultismo.atual / dados.ocultismo.max) * 100}%`
+        pontosAtuaisTotais[0].value = dados.vida.atual
+        pontosMaximosTotais[0].value = dados.vida.max
+        pontosAtuaisTotais[1].value = dados.sanidade.atual
+        pontosMaximosTotais[1].value = dados.sanidade.max
+        pontosAtuaisTotais[2].value = dados.ocultismo.atual
+        pontosMaximosTotais[2].value = dados.ocultismo.max
 
-    // dinheiro
-    money.innerHTML = dados.dinheiro
+        document.querySelector(".vida").style.width = `${(dados.vida.atual / dados.vida.max) * 100}%`
+        document.querySelector(".sanidade").style.width = `${(dados.sanidade.atual / dados.sanidade.max) * 100}%`
+        document.querySelector(".ocultismo").style.width = `${(dados.ocultismo.atual / dados.ocultismo.max) * 100}%`
 
-    // armas
-    arrayWeapons.length = 0
-    dados.armas.forEach(arma => {
-        arrayWeapons.push(arma)
-    })
-    addWeapon()
+        money.innerHTML = dados.dinheiro
 
-    // inventário
-    inventory.innerHTML = ""
-    peso.length = 0
-    dados.inventario.forEach(item => {
-        const div = document.createElement("div")
-        div.classList.add("items")
+        arrayWeapons.length = 0
+        dados.armas.forEach(arma => arrayWeapons.push(arma))
+        addWeapon()
 
-        const del = document.createElement("button")
-        del.classList.add("del-buttons")
-        del.innerHTML = "🗑"
-        del.addEventListener("click", handleClickDelete)
+        inventory.innerHTML = ""
+        peso.length = 0
+        dados.inventario.forEach(item => {
+            const div = document.createElement("div")
+            div.classList.add("items")
 
-        const nome = document.createElement("input")
-        nome.value = item.nome
+            const del = document.createElement("button")
+            del.classList.add("del-buttons")
+            del.innerHTML = "🗑"
+            del.addEventListener("click", handleClickDelete)
 
-        const pesoItem = document.createElement("input")
-        pesoItem.value = item.peso
+            const nome = document.createElement("input")
+            nome.value = item.nome
 
-        peso.push(Number(item.peso))
-        div.append(del, nome, pesoItem)
-        inventory.appendChild(div)
-    })
-    handleWeight()
-    carregarPagina()
+            const pesoItem = document.createElement("input")
+            pesoItem.value = item.peso
+
+            peso.push(Number(item.peso))
+            div.append(del, nome, pesoItem)
+            inventory.appendChild(div)
+        })
+        handleWeight()
+    } catch (err) {
+        console.error("Erro ao carregar dados:", err)
+    }
 }
