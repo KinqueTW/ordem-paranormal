@@ -557,4 +557,5 @@ function carregarPagina() {
         inventory.appendChild(div)
     })
     handleWeight()
+    carregarPagina()
 }
